@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .map-container {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .map-container iframe {
+      position: absolute;
+      width: 100%;
+      height: calc(100% + 60px);
+      top: -60px;
+      left: 0;
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="map-container">
+    <iframe
+      src="https://www.google.com/maps/d/u/0/embed?mid=1J_F0DiQivNpZOaNrEyc7dK8zvw27U00"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+</body>
+</html>
