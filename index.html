@@ -3,42 +3,841 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>제주 여행 지도</title>
 
   <style>
-    html, body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans KR",
+        sans-serif;
       overflow: hidden;
     }
 
-    .map-container {
+    .app {
+      display: flex;
       width: 100%;
       height: 100vh;
-      overflow: hidden;
-      position: relative;
+      min-height: 420px;
+      background: #fff;
     }
 
-    .map-container iframe {
-      position: absolute;
+    /* =========================
+       왼쪽 장소 목록
+       ========================= */
+
+    .sidebar {
+      width: 320px;
+      min-width: 280px;
+      height: 100%;
+      overflow-y: auto;
+      border-right: 1px solid #e5e7eb;
+      background: #fff;
+      z-index: 2;
+    }
+
+    .sidebar-header {
+      position: sticky;
+      top: 0;
+      padding: 22px 20px 16px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #f0f0f0;
+      z-index: 3;
+    }
+
+    .sidebar-header h1 {
+      margin: 0 0 6px;
+      font-size: 21px;
+      line-height: 1.3;
+    }
+
+    .sidebar-header p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    /* =========================
+       카테고리 필터
+       ========================= */
+
+    .filters {
+      display: flex;
+      gap: 6px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .filter-btn {
+      flex: 0 0 auto;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+    }
+
+    /* =========================
+       장소 목록
+       ========================= */
+
+    .place-group {
+      padding: 14px 10px 4px;
+    }
+
+    .group-title {
+      padding: 4px 10px 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .place-card {
+      display: block;
       width: 100%;
-      height: calc(100% + 100px);
-      top: -90px;
-      left: 0;
+      padding: 12px 10px;
       border: 0;
+      border-radius: 10px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .place-card:hover {
+      background: #f5f6f7;
+    }
+
+    .place-name {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .place-description {
+      display: block;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #6b7280;
+    }
+
+    /* =========================
+       지도
+       ========================= */
+
+    .map {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 오류 메시지 */
+
+    .error {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      max-width: calc(100% - 40px);
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #111827;
+      color: #fff;
+      font-size: 13px;
+      z-index: 999;
+    }
+
+    /* 모바일 */
+
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 260px;
+        min-width: 240px;
+      }
+
+      .sidebar-header h1 {
+        font-size: 18px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="map-container">
-    <iframe
-      src="https://www.google.com/maps/d/u/0/embed?mid=1J_F0DiQivNpZOaNrEyc7dK8zvw27U00"
-      allowfullscreen>
-    </iframe>
+  <div class="app">
+
+    <!-- =========================
+         왼쪽 장소 목록
+         ========================= -->
+
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+        <h1>📍 제주 여행</h1>
+        <p>가보고 싶은 장소를 한눈에 확인하세요.</p>
+      </div>
+
+      <div class="filters">
+
+        <button
+          class="filter-btn active"
+          data-category="전체">
+          전체
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="맛집">
+          🍜 맛집
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="카페">
+          ☕ 카페
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="관광지">
+          🏖️ 관광지
+        </button>
+
+      </div>
+
+      <div id="placeList"></div>
+
+    </aside>
+
+
+    <!-- =========================
+         오른쪽 Google 지도
+         ========================= -->
+
+    <main class="map">
+      <div id="map"></div>
+    </main>
+
   </div>
+
+
+  <div id="error" class="error"></div>
+
+
+  <script>
+
+    /*
+    ============================================================
+    1. Google Maps Demo Key
+    ============================================================
+
+    YOUR_DEMO_KEY_HERE 부분을
+    네가 발급받은 Demo Key로 변경하세요.
+
+    예:
+
+    const API_KEY = "AIza........";
+    */
+
+    const API_KEY = "YOUR_DEMO_KEY_HERE";
+
+
+    /*
+    ============================================================
+    2. 장소 데이터
+    ============================================================
+
+    여기에 여행 장소를 추가하면 됩니다.
+
+    category:
+    - 맛집
+    - 카페
+    - 관광지
+
+    lat / lng:
+    Google Maps 좌표
+
+    나중에 네 실제 제주 여행 장소로 바꾸면 됩니다.
+    */
+
+    const places = [
+
+      {
+        id: 1,
+        name: "우진해장국",
+        category: "맛집",
+        lat: 33.4989,
+        lng: 126.5149,
+        description: "제주식 고사리 해장국"
+      },
+
+      {
+        id: 2,
+        name: "오는정김밥",
+        category: "맛집",
+        lat: 33.2508,
+        lng: 126.5636,
+        description: "서귀포 대표 김밥 맛집"
+      },
+
+      {
+        id: 3,
+        name: "카페 델문도",
+        category: "카페",
+        lat: 33.5563,
+        lng: 126.7958,
+        description: "함덕 해변을 바라보는 카페"
+      },
+
+      {
+        id: 4,
+        name: "오설록 티 뮤지엄",
+        category: "관광지",
+        lat: 33.3059,
+        lng: 126.2896,
+        description: "녹차밭과 티 뮤지엄"
+      },
+
+      {
+        id: 5,
+        name: "성산일출봉",
+        category: "관광지",
+        lat: 33.4581,
+        lng: 126.9426,
+        description: "제주의 대표적인 일출 명소"
+      },
+
+      {
+        id: 6,
+        name: "협재해수욕장",
+        category: "관광지",
+        lat: 33.3943,
+        lng: 126.2396,
+        description: "에메랄드빛 바다와 비양도"
+      }
+
+    ];
+
+
+    let map;
+    let markers = [];
+    let infoWindow;
+
+
+    /*
+    ============================================================
+    오류 메시지
+    ============================================================
+    */
+
+    function showError(message) {
+
+      const error = document.getElementById("error");
+
+      error.textContent = message;
+      error.style.display = "block";
+
+    }
+
+
+    /*
+    ============================================================
+    Google Map 초기화
+    ============================================================
+    */
+
+    async function initMap() {
+
+      try {
+
+        if (
+          !API_KEY ||
+          API_KEY === "AIzaSyAc7LDz8BDJDlX54sWnhMteaoEf_4KpOKg"
+        ) {
+
+          showError(
+            "index.html에서 YOUR_DEMO_KEY_HERE를 Demo Key로 변경해주세요."
+          );
+
+          return;
+        }
+
+
+        const { Map } =
+          await google.maps.importLibrary("maps");
+
+
+        const { AdvancedMarkerElement } =
+          await google.maps.importLibrary("marker");
+
+
+        /*
+        지도 생성
+        */
+
+        map = new Map(
+          document.getElementById("map"),
+          {
+
+            center: {
+              lat: 33.3617,
+              lng: 126.5292
+            },
+
+            zoom: 10,
+
+            mapTypeControl: false,
+
+            streetViewControl: false,
+
+            fullscreenControl: true,
+
+            mapId: "DEMO_MAP_ID"
+
+          }
+        );
+
+
+        infoWindow =
+          new google.maps.InfoWindow();
+
+
+        /*
+        마커 생성
+        */
+
+        createMarkers(
+          AdvancedMarkerElement
+        );
+
+
+        /*
+        왼쪽 장소 목록 생성
+        */
+
+        renderPlaceList();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        showError(
+          "지도를 불러오지 못했습니다. Demo Key와 Maps JavaScript API 활성화를 확인해주세요."
+        );
+
+      }
+
+    }
+
+
+    /*
+    ============================================================
+    마커 생성
+    ============================================================
+    */
+
+    function createMarkers(
+      AdvancedMarkerElement
+    ) {
+
+      markers.forEach(
+        marker => marker.map = null
+      );
+
+      markers = [];
+
+
+      places.forEach(place => {
+
+        const marker =
+          new AdvancedMarkerElement({
+
+            map,
+
+            position: {
+              lat: place.lat,
+              lng: place.lng
+            },
+
+            title: place.name
+
+          });
+
+
+        /*
+        마커 클릭
+        */
+
+        marker.addListener(
+          "click",
+          () => {
+
+            map.panTo({
+              lat: place.lat,
+              lng: place.lng
+            });
+
+
+            map.setZoom(15);
+
+
+            infoWindow.setContent(`
+
+              <div
+                style="
+                  padding:4px 6px;
+                  max-width:220px;
+                "
+              >
+
+                <div
+                  style="
+                    font-size:13px;
+                    color:#6b7280;
+                    margin-bottom:4px;
+                  "
+                >
+                  ${place.category}
+                </div>
+
+                <div
+                  style="
+                    font-size:16px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                  "
+                >
+                  ${place.name}
+                </div>
+
+                <div
+                  style="
+                    font-size:12px;
+                    color:#6b7280;
+                  "
+                >
+                  ${place.description || ""}
+                </div>
+
+              </div>
+
+            `);
+
+
+            infoWindow.open({
+
+              map,
+
+              anchor: marker
+
+            });
+
+          }
+        );
+
+
+        markers.push(marker);
+
+      });
+
+    }
+
+
+    /*
+    ============================================================
+    왼쪽 장소 목록 생성
+    ============================================================
+    */
+
+    function renderPlaceList(
+      category = "전체"
+    ) {
+
+      const list =
+        document.getElementById(
+          "placeList"
+        );
+
+
+      list.innerHTML = "";
+
+
+      const filtered =
+        category === "전체"
+          ? places
+          : places.filter(
+              place =>
+                place.category === category
+            );
+
+
+      const categories = [
+        "맛집",
+        "카페",
+        "관광지"
+      ];
+
+
+      categories.forEach(
+        currentCategory => {
+
+          const categoryPlaces =
+            filtered.filter(
+              place =>
+                place.category ===
+                currentCategory
+            );
+
+
+          if (
+            categoryPlaces.length === 0
+          ) {
+            return;
+          }
+
+
+          const group =
+            document.createElement(
+              "section"
+            );
+
+          group.className =
+            "place-group";
+
+
+          const title =
+            document.createElement(
+              "div"
+            );
+
+          title.className =
+            "group-title";
+
+          title.textContent =
+            getCategoryLabel(
+              currentCategory
+            );
+
+
+          group.appendChild(title);
+
+
+          /*
+          장소 카드 생성
+          */
+
+          categoryPlaces.forEach(
+            place => {
+
+              const button =
+                document.createElement(
+                  "button"
+                );
+
+              button.className =
+                "place-card";
+
+
+              button.innerHTML = `
+
+                <span
+                  class="place-name"
+                >
+                  ${place.name}
+                </span>
+
+                <span
+                  class="place-description"
+                >
+                  ${place.description || ""}
+                </span>
+
+              `;
+
+
+              /*
+              장소 클릭
+              */
+
+              button.addEventListener(
+                "click",
+                () => {
+
+                  map.panTo({
+
+                    lat: place.lat,
+
+                    lng: place.lng
+
+                  });
+
+
+                  map.setZoom(15);
+
+
+                  const marker =
+                    markers.find(
+                      marker =>
+                        marker.title ===
+                        place.name
+                    );
+
+
+                  if (marker) {
+
+                    google.maps.event.trigger(
+                      marker,
+                      "click"
+                    );
+
+                  }
+
+                }
+              );
+
+
+              group.appendChild(button);
+
+            }
+          );
+
+
+          list.appendChild(group);
+
+        }
+      );
+
+    }
+
+
+    /*
+    ============================================================
+    카테고리 이름
+    ============================================================
+    */
+
+    function getCategoryLabel(
+      category
+    ) {
+
+      const labels = {
+
+        맛집: "🍜 맛집",
+
+        카페: "☕ 카페",
+
+        관광지: "🏖️ 관광지"
+
+      };
+
+
+      return (
+        labels[category] ||
+        category
+      );
+
+    }
+
+
+    /*
+    ============================================================
+    카테고리 필터
+    ============================================================
+    */
+
+    document
+      .querySelectorAll(".filter-btn")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            document
+              .querySelectorAll(
+                ".filter-btn"
+              )
+              .forEach(btn =>
+                btn.classList.remove(
+                  "active"
+                )
+              );
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            renderPlaceList(
+              button.dataset.category
+            );
+
+          }
+        );
+
+      });
+
+
+    /*
+    ============================================================
+    Google Maps JavaScript API 로드
+    ============================================================
+    */
+
+    const script =
+      document.createElement(
+        "script"
+      );
+
+
+    script.src =
+      "https://maps.googleapis.com/maps/api/js" +
+      "?key=" +
+      encodeURIComponent(API_KEY) +
+      "&loading=async" +
+      "&callback=initMap";
+
+
+    script.async = true;
+
+    script.defer = true;
+
+
+    document.head.appendChild(
+      script
+    );
+
+  </script>
 
 </body>
 </html>
