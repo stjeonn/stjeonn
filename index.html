@@ -12,22 +12,18 @@
 
     html,
     body {
-      margin: 0;
-      padding: 0;
       width: 100%;
       height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
       font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         "Noto Sans KR",
         sans-serif;
-      overflow: hidden;
     }
-
-    /* =========================
-       전체 영역
-       ========================= */
 
     .app {
       display: flex;
@@ -38,10 +34,6 @@
       background: #fff;
     }
 
-    /* =========================
-       왼쪽 패널
-       ========================= */
-
     .sidebar {
       width: 320px;
       min-width: 320px;
@@ -50,31 +42,22 @@
       border-right: 1px solid #e5e7eb;
       background: #fff;
       z-index: 2;
-
       transition:
         width 0.25s ease,
-        min-width 0.25s ease;
-
-      position: relative;
+        min-width 0.25s ease,
+        border-width 0.25s ease;
     }
-
-    /* 접힌 상태 */
 
     .app.sidebar-collapsed .sidebar {
       width: 0;
       min-width: 0;
-      border-right: none;
       overflow: hidden;
+      border-right-width: 0;
     }
-
-    /* =========================
-       사이드바 상단
-       ========================= */
 
     .sidebar-header {
       padding: 22px 20px 16px;
       border-bottom: 1px solid #f0f0f0;
-      background: #fff;
       white-space: nowrap;
     }
 
@@ -90,24 +73,21 @@
       font-size: 13px;
     }
 
-    /* =========================
-       카테고리
-       ========================= */
-
     .filters {
       display: flex;
       gap: 6px;
       padding: 12px 16px;
       overflow-x: auto;
       border-bottom: 1px solid #f0f0f0;
+      white-space: nowrap;
     }
 
     .filter-btn {
       flex: 0 0 auto;
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      border-radius: 999px;
       padding: 7px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: #fff;
       font-size: 12px;
       cursor: pointer;
     }
@@ -117,14 +97,10 @@
     }
 
     .filter-btn.active {
+      border-color: #111827;
       background: #111827;
       color: #fff;
-      border-color: #111827;
     }
-
-    /* =========================
-       장소 목록
-       ========================= */
 
     .place-group {
       padding: 14px 10px 4px;
@@ -132,9 +108,9 @@
 
     .group-title {
       padding: 4px 10px 8px;
+      color: #374151;
       font-size: 13px;
       font-weight: 700;
-      color: #374151;
     }
 
     .place-card {
@@ -155,27 +131,23 @@
     .place-name {
       display: block;
       margin-bottom: 4px;
+      color: #111827;
       font-size: 14px;
       font-weight: 600;
-      color: #111827;
     }
 
     .place-description {
       display: block;
+      color: #6b7280;
       font-size: 12px;
       line-height: 1.45;
-      color: #6b7280;
     }
 
-    /* =========================
-       지도 영역
-       ========================= */
-
     .map-area {
+      position: relative;
       flex: 1;
       min-width: 0;
       height: 800px;
-      position: relative;
     }
 
     #map {
@@ -183,44 +155,30 @@
       height: 100%;
     }
 
-    /* =========================
-       접기 / 펼치기 버튼
-       ========================= */
-
     .sidebar-toggle {
       position: absolute;
-
-      /*
-      사이드바 오른쪽 경계에 붙임
-      */
-
-      left: 320px;
       top: 16px;
-
-      width: 34px;
-      height: 34px;
+      left: 320px;
+      z-index: 10;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
+      width: 34px;
+      height: 34px;
+      padding: 0;
+
       border: 1px solid #e5e7eb;
       border-radius: 8px;
-
-      background: rgba(255, 255, 255, 0.95);
-
+      background: rgba(255, 255, 255, 0.96);
       color: #374151;
 
       font-size: 16px;
       line-height: 1;
-
       cursor: pointer;
 
-      box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.12);
-
-      z-index: 10;
-
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
       transition:
         left 0.25s ease,
         background 0.15s ease;
@@ -230,171 +188,102 @@
       background: #f5f5f5;
     }
 
-    /*
-    사이드바가 접혔을 때
-    버튼을 화면 왼쪽에 붙임
-    */
-
     .app.sidebar-collapsed .sidebar-toggle {
       left: 12px;
     }
-
-    /* =========================
-       오류 메시지
-       ========================= */
 
     .error {
       display: none;
       position: fixed;
       top: 20px;
       left: 50%;
-      transform: translateX(-50%);
+      z-index: 9999;
+
       max-width: calc(100% - 40px);
       padding: 12px 16px;
+
       border-radius: 10px;
       background: #111827;
       color: #fff;
+
       font-size: 13px;
       line-height: 1.5;
-      z-index: 9999;
+      transform: translateX(-50%);
     }
 
-    /* =========================
-       모바일
-       ========================= */
-
     @media (max-width: 700px) {
-
       .sidebar {
         width: 260px;
         min-width: 260px;
-      }
-
-      .app.sidebar-collapsed .sidebar {
-        width: 0;
-        min-width: 0;
       }
 
       .sidebar-toggle {
         left: 260px;
       }
 
+      .app.sidebar-collapsed .sidebar-toggle {
+        left: 12px;
+      }
+
       .sidebar-header h1 {
         font-size: 18px;
       }
-
     }
   </style>
 </head>
 
-
 <body>
-
   <div class="app" id="app">
-
-    <!-- =========================
-         왼쪽 장소 목록
-         ========================= -->
-
     <aside class="sidebar" id="sidebar">
-
       <div class="sidebar-header">
-
         <h1>📍 제주 여행</h1>
-
-        <p>
-          가보고 싶은 장소를 한눈에 확인하세요.
-        </p>
-
+        <p>가보고 싶은 장소를 한눈에 확인하세요.</p>
       </div>
 
-
       <div class="filters">
-
-        <button
-          class="filter-btn active"
-          data-category="전체">
+        <button type="button" class="filter-btn active" data-category="전체">
           전체
         </button>
 
-        <button
-          class="filter-btn"
-          data-category="맛집">
+        <button type="button" class="filter-btn" data-category="맛집">
           🍜 맛집
         </button>
 
-        <button
-          class="filter-btn"
-          data-category="카페">
+        <button type="button" class="filter-btn" data-category="카페">
           ☕ 카페
         </button>
 
-        <button
-          class="filter-btn"
-          data-category="관광지">
+        <button type="button" class="filter-btn" data-category="관광지">
           🏖️ 관광지
         </button>
-
       </div>
 
-
       <div id="placeList"></div>
-
     </aside>
 
-
-    <!-- =========================
-         오른쪽 지도
-         ========================= -->
-
     <main class="map-area">
-
       <div id="map"></div>
-
     </main>
-
-
-    <!-- =========================
-         사이드바 접기 / 펼치기
-         ========================= -->
 
     <button
       type="button"
       class="sidebar-toggle"
       id="sidebarToggle"
       aria-label="장소 목록 접기"
-      title="장소 목록 접기">
-
+      aria-expanded="true"
+      aria-controls="sidebar"
+      title="장소 목록 접기"
+    >
       ◀
-
     </button>
-
   </div>
-
 
   <div id="error" class="error"></div>
 
-
   <script>
-
-    /*
-    ============================================================
-    1. GOOGLE MAPS API KEY
-    ============================================================
-    */
-
-    const API_KEY =
-      "AIzaSyAc7LDz8BDJDlX54sWnhMteaoEf_4KpOKg";
-
-
-    /*
-    ============================================================
-    2. 여행 장소
-    ============================================================
-    */
+    const API_KEY = "AIzaSyAc7LDz8BDJDlX54sWnhMteaoEf_4KpOKg";
 
     const places = [
-
       {
         id: 1,
         name: "우진해장국",
@@ -403,7 +292,6 @@
         lng: 126.5149,
         description: "제주식 고사리 해장국"
       },
-
       {
         id: 2,
         name: "오는정김밥",
@@ -412,7 +300,6 @@
         lng: 126.5636,
         description: "서귀포 대표 김밥 맛집"
       },
-
       {
         id: 3,
         name: "카페 델문도",
@@ -421,7 +308,6 @@
         lng: 126.7958,
         description: "함덕 해변을 바라보는 카페"
       },
-
       {
         id: 4,
         name: "오설록 티 뮤지엄",
@@ -430,7 +316,6 @@
         lng: 126.2896,
         description: "녹차밭과 티 뮤지엄"
       },
-
       {
         id: 5,
         name: "성산일출봉",
@@ -439,7 +324,6 @@
         lng: 126.9426,
         description: "제주의 대표적인 일출 명소"
       },
-
       {
         id: 6,
         name: "협재해수욕장",
@@ -448,651 +332,244 @@
         lng: 126.2396,
         description: "에메랄드빛 바다와 비양도"
       }
-
     ];
 
+    let map = null;
+    let infoWindow = null;
+    let activeCategory = "전체";
 
-    let map;
+    const markers = new Map();
 
-    let markers = [];
-
-    let infoWindow;
-
-
-    /*
-    ============================================================
-    오류 표시
-    ============================================================
-    */
+    const app = document.getElementById("app");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const placeList = document.getElementById("placeList");
 
     function showError(message) {
-
-      const error =
-        document.getElementById("error");
-
+      const error = document.getElementById("error");
       error.textContent = message;
-
       error.style.display = "block";
-
     }
 
-
-    /*
-    ============================================================
-    사이드바 접기 / 펼치기
-    ============================================================
-    */
-
-    const app =
-      document.getElementById("app");
-
-    const sidebarToggle =
-      document.getElementById(
-        "sidebarToggle"
-      );
-
-
-    sidebarToggle.addEventListener(
-      "click",
-      function() {
-
-        const isCollapsed =
-          app.classList.toggle(
-            "sidebar-collapsed"
-          );
-
-
-        if (isCollapsed) {
-
-          /*
-          접힘
-          */
-
-          sidebarToggle.textContent = "▶";
-
-          sidebarToggle.setAttribute(
-            "aria-label",
-            "장소 목록 펼치기"
-          );
-
-          sidebarToggle.setAttribute(
-            "title",
-            "장소 목록 펼치기"
-          );
-
-        } else {
-
-          /*
-          펼침
-          */
-
-          sidebarToggle.textContent = "◀";
-
-          sidebarToggle.setAttribute(
-            "aria-label",
-            "장소 목록 접기"
-          );
-
-          sidebarToggle.setAttribute(
-            "title",
-            "장소 목록 접기"
-          );
-
-        }
-
-
-        /*
-        CSS transition이 끝난 뒤
-        Google Maps에 크기 변경 알림
-        */
-
-        setTimeout(
-          function() {
-
-            if (map) {
-
-              google.maps.event.trigger(
-                map,
-                "resize"
-              );
-
-            }
-
-          },
-          280
-        );
-
-      }
-    );
-
-
-    /*
-    ============================================================
-    GOOGLE MAP 초기화
-    ============================================================
-    */
-
-window.initMap = function () {
-
-  try {
-
-    if (
-      !API_KEY ||
-      API_KEY === "AIzaSyAc7LDz8BDJDlX54sWnhMteaoEf_4KpOKg"
-    ) {
-
-      showError(
-        "index.html의 API_KEY에 Demo Key를 입력해주세요."
-      );
-
-      return;
+    function escapeHtml(text) {
+      const element = document.createElement("div");
+      element.textContent = text;
+      return element.innerHTML;
     }
 
-    map = new google.maps.Map(
-      document.getElementById("map"),
-      {
-        center: {
-          lat: 33.3617,
-          lng: 126.5292
-        },
+    function openPlace(place) {
+      const marker = markers.get(place.id);
 
-        zoom: 10,
-
-        mapTypeControl: false,
-
-        streetViewControl: false,
-
-        fullscreenControl: true
-      }
-    );
-
-    infoWindow =
-      new google.maps.InfoWindow();
-
-    createMarkers();
-
-    renderPlaceList();
-
-  } catch (error) {
-
-    console.error(
-      "initMap 오류:",
-      error
-    );
-
-    showError(
-      "Google 지도를 불러오는 중 오류가 발생했습니다."
-    );
-
-  }
-
-};
-
-
-        /*
-        지도 생성
-        */
-
-        map =
-          new google.maps.Map(
-            document.getElementById("map"),
-            {
-
-              center: {
-                lat: 33.3617,
-                lng: 126.5292
-              },
-
-              zoom: 10,
-
-              mapTypeControl: false,
-
-              streetViewControl: false,
-
-              fullscreenControl: true
-
-            }
-          );
-
-
-        /*
-        InfoWindow
-        */
-
-        infoWindow =
-          new google.maps.InfoWindow();
-
-
-        /*
-        마커 생성
-        */
-
-        createMarkers();
-
-
-        /*
-        장소 목록 생성
-        */
-
-        renderPlaceList();
-
+      if (!map || !marker) {
+        return;
       }
 
+      map.panTo({
+        lat: place.lat,
+        lng: place.lng
+      });
 
-      catch (error) {
+      map.setZoom(15);
 
-        console.error(error);
+      infoWindow.setContent(`
+        <div style="padding:4px 6px; max-width:220px;">
+          <div style="margin-bottom:5px; color:#6b7280; font-size:12px;">
+            ${escapeHtml(place.category)}
+          </div>
 
-        showError(
-          "Google 지도를 불러오는 중 오류가 발생했습니다."
-        );
+          <div style="margin-bottom:5px; font-size:16px; font-weight:700;">
+            ${escapeHtml(place.name)}
+          </div>
 
-      }
+          <div style="color:#6b7280; font-size:12px; line-height:1.5;">
+            ${escapeHtml(place.description)}
+          </div>
+        </div>
+      `);
 
+      infoWindow.open({
+        map: map,
+        anchor: marker
+      });
     }
-
-
-    /*
-    ============================================================
-    마커 생성
-    ============================================================
-    */
 
     function createMarkers() {
+      places.forEach(function (place) {
+        const marker = new google.maps.Marker({
+          map: map,
+          position: {
+            lat: place.lat,
+            lng: place.lng
+          },
+          title: place.name
+        });
 
-      places.forEach(
-        place => {
+        marker.addListener("click", function () {
+          openPlace(place);
+        });
 
-          const marker =
-            new google.maps.Marker({
+        markers.set(place.id, marker);
+      });
+    }
 
-              map: map,
+    function renderPlaceList() {
+      const visiblePlaces = places.filter(function (place) {
+        return activeCategory === "전체" || place.category === activeCategory;
+      });
 
-              position: {
-                lat: place.lat,
-                lng: place.lng
-              },
+      const categories = ["맛집", "카페", "관광지"];
 
-              title: place.name
-
-            });
-
-
-          /*
-          마커 클릭
-          */
-
-          marker.addListener(
-            "click",
-            function() {
-
-              map.panTo({
-
-                lat: place.lat,
-
-                lng: place.lng
-
-              });
-
-
-              map.setZoom(15);
-
-
-              infoWindow.setContent(`
-
-                <div
-                  style="
-                    padding:4px 6px;
-                    max-width:220px;
-                  "
-                >
-
-                  <div
-                    style="
-                      font-size:12px;
-                      color:#6b7280;
-                      margin-bottom:5px;
-                    "
-                  >
-                    ${place.category}
-                  </div>
-
-
-                  <div
-                    style="
-                      font-size:16px;
-                      font-weight:700;
-                      margin-bottom:5px;
-                    "
-                  >
-                    ${place.name}
-                  </div>
-
-
-                  <div
-                    style="
-                      font-size:12px;
-                      color:#6b7280;
-                    "
-                  >
-                    ${place.description || ""}
-                  </div>
-
-                </div>
-
-              `);
-
-
-              infoWindow.open(
-                map,
-                marker
-              );
-
-            }
-          );
-
-
-          markers.push({
-
-            place: place,
-
-            marker: marker
-
+      placeList.innerHTML = categories
+        .map(function (category) {
+          const categoryPlaces = visiblePlaces.filter(function (place) {
+            return place.category === category;
           });
 
-        }
-      );
-
-    }
-
-
-    /*
-    ============================================================
-    왼쪽 장소 목록
-    ============================================================
-    */
-
-    function renderPlaceList(
-      category = "전체"
-    ) {
-
-      const list =
-        document.getElementById(
-          "placeList"
-        );
-
-
-      list.innerHTML = "";
-
-
-      const filteredPlaces =
-        category === "전체"
-          ? places
-          : places.filter(
-              place =>
-                place.category ===
-                category
-            );
-
-
-      const categories = [
-
-        "맛집",
-
-        "카페",
-
-        "관광지"
-
-      ];
-
-
-      categories.forEach(
-        currentCategory => {
-
-          const categoryPlaces =
-            filteredPlaces.filter(
-              place =>
-                place.category ===
-                currentCategory
-            );
-
-
-          if (
-            categoryPlaces.length === 0
-          ) {
-
-            return;
-
+          if (categoryPlaces.length === 0) {
+            return "";
           }
 
+          return `
+            <section class="place-group">
+              <div class="group-title">${category}</div>
 
-          const group =
-            document.createElement(
-              "section"
-            );
+              ${categoryPlaces
+                .map(function (place) {
+                  return `
+                    <button
+                      type="button"
+                      class="place-card"
+                      data-place-id="${place.id}"
+                    >
+                      <span class="place-name">${escapeHtml(place.name)}</span>
+                      <span class="place-description">
+                        ${escapeHtml(place.description)}
+                      </span>
+                    </button>
+                  `;
+                })
+                .join("")}
+            </section>
+          `;
+        })
+        .join("");
 
+      document.querySelectorAll(".place-card").forEach(function (card) {
+        card.addEventListener("click", function () {
+          const placeId = Number(card.dataset.placeId);
+          const place = places.find(function (item) {
+            return item.id === placeId;
+          });
 
-          group.className =
-            "place-group";
-
-
-          const title =
-            document.createElement(
-              "div"
-            );
-
-
-          title.className =
-            "group-title";
-
-
-          title.textContent =
-            getCategoryLabel(
-              currentCategory
-            );
-
-
-          group.appendChild(
-            title
-          );
-
-
-          categoryPlaces.forEach(
-            place => {
-
-              const button =
-                document.createElement(
-                  "button"
-                );
-
-
-              button.className =
-                "place-card";
-
-
-              button.innerHTML = `
-
-                <span
-                  class="place-name"
-                >
-                  ${place.name}
-                </span>
-
-                <span
-                  class="place-description"
-                >
-                  ${place.description || ""}
-                </span>
-
-              `;
-
-
-              button.addEventListener(
-                "click",
-                function() {
-
-                  map.panTo({
-
-                    lat: place.lat,
-
-                    lng: place.lng
-
-                  });
-
-
-                  map.setZoom(15);
-
-
-                  const markerObject =
-                    markers.find(
-                      item =>
-                        item.place.id ===
-                        place.id
-                    );
-
-
-                  if (
-                    markerObject
-                  ) {
-
-                    google.maps.event.trigger(
-                      markerObject.marker,
-                      "click"
-                    );
-
-                  }
-
-                }
-              );
-
-
-              group.appendChild(
-                button
-              );
-
-            }
-          );
-
-
-          list.appendChild(
-            group
-          );
-
-        }
-      );
-
+          if (place) {
+            openPlace(place);
+          }
+        });
+      });
     }
 
+    function applyFilter(category) {
+      activeCategory = category;
 
-    /*
-    ============================================================
-    카테고리 이름
-    ============================================================
-    */
+      document.querySelectorAll(".filter-btn").forEach(function (button) {
+        button.classList.toggle(
+          "active",
+          button.dataset.category === activeCategory
+        );
+      });
 
-    function getCategoryLabel(
-      category
-    ) {
+      markers.forEach(function (marker, placeId) {
+        const place = places.find(function (item) {
+          return item.id === placeId;
+        });
 
-      const labels = {
+        marker.setVisible(
+          activeCategory === "전체" || place.category === activeCategory
+        );
+      });
 
-        "맛집": "🍜 맛집",
+      infoWindow.close();
+      renderPlaceList();
+    }
 
-        "카페": "☕ 카페",
+    document.querySelectorAll(".filter-btn").forEach(function (button) {
+      button.addEventListener("click", function () {
+        applyFilter(button.dataset.category);
+      });
+    });
 
-        "관광지": "🏖️ 관광지"
+    sidebarToggle.addEventListener("click", function () {
+      const isCollapsed = app.classList.toggle("sidebar-collapsed");
 
+      sidebarToggle.textContent = isCollapsed ? "▶" : "◀";
+      sidebarToggle.setAttribute(
+        "aria-label",
+        isCollapsed ? "장소 목록 펼치기" : "장소 목록 접기"
+      );
+      sidebarToggle.setAttribute(
+        "title",
+        isCollapsed ? "장소 목록 펼치기" : "장소 목록 접기"
+      );
+      sidebarToggle.setAttribute(
+        "aria-expanded",
+        String(!isCollapsed)
+      );
+
+      window.setTimeout(function () {
+        if (map && window.google && google.maps) {
+          google.maps.event.trigger(map, "resize");
+        }
+      }, 280);
+    });
+
+    window.initMap = function () {
+      if (map) {
+        return;
+      }
+
+      try {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: {
+            lat: 33.3617,
+            lng: 126.5292
+          },
+          zoom: 10,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true
+        });
+
+        infoWindow = new google.maps.InfoWindow();
+
+        createMarkers();
+        renderPlaceList();
+      } catch (error) {
+        console.error("Google Maps 초기화 오류:", error);
+        showError("Google 지도를 불러오는 중 오류가 발생했습니다.");
+      }
+    };
+
+    window.gm_authFailure = function () {
+      showError("Google Maps API 인증에 실패했습니다.");
+    };
+
+    if (!API_KEY.trim()) {
+      showError("Google Maps API 키가 비어 있습니다.");
+    } else {
+      const googleMapsScript = document.createElement("script");
+
+      googleMapsScript.src =
+        "https://maps.googleapis.com/maps/api/js" +
+        "?key=" + encodeURIComponent(API_KEY) +
+        "&callback=initMap" +
+        "&loading=async";
+
+      googleMapsScript.async = true;
+      googleMapsScript.onerror = function () {
+        showError("Google Maps API를 불러오지 못했습니다.");
       };
 
-
-      return (
-        labels[category] ||
-        category
-      );
-
+      document.head.appendChild(googleMapsScript);
     }
-
-
-    /*
-    ============================================================
-    카테고리 버튼
-    ============================================================
-    */
-
-    document
-      .querySelectorAll(
-        ".filter-btn"
-      )
-      .forEach(
-        button => {
-
-          button.addEventListener(
-            "click",
-            function() {
-
-              document
-                .querySelectorAll(
-                  ".filter-btn"
-                )
-                .forEach(
-                  btn =>
-                    btn.classList.remove(
-                      "active"
-                    )
-                );
-
-
-              button.classList.add(
-                "active"
-              );
-
-
-              renderPlaceList(
-                button.dataset.category
-              );
-
-            }
-          );
-
-        }
-      );
-
-
-    /*
-    ============================================================
-    Google Maps API 로드
-    ============================================================
-    */
-
-const script =
-  document.createElement("script");
-
-script.src =
-  "https://maps.googleapis.com/maps/api/js" +
-  "?key=" +
-  encodeURIComponent(API_KEY) +
-  "&loading=async";
-
-script.async = true;
-script.defer = true;
-
-script.onload = function () {
-
-  window.initMap();
-
-};
-
-script.onerror = function () {
-
-  showError(
-    "Google Maps API를 불러오지 못했습니다. API Key를 확인해주세요."
-  );
-
-};
-
-document.head.appendChild(script);
-
   </script>
-
 </body>
 </html>
