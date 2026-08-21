@@ -227,13 +227,29 @@
       try {
         const data = await requestSheetData(SHEET_NAME);
         if (data.status === "error") throw new Error("'" + SHEET_NAME + "' 탭을 찾지 못했습니다.");
-        const columns = data.table.cols.map(function (column) { return String(column.label || "").trim().toLowerCase(); });
+        let columns = data.table.cols.map(function (column) { return String(column.label || "").trim().toLowerCase(); });
         const requiredColumns = ["name", "category", "map_url", "description"];
+        let dataRows = data.table.rows || [];
+
+        // Google Sheets가 첫 행을 열 이름으로 전달하지 않는 경우를 처리합니다.
+        // 이 경우 첫 번째 데이터 행에서 name/category/map_url/description을 읽습니다.
+        if (!requiredColumns.every(function (column) { return columns.includes(column); }) && dataRows.length > 0) {
+          const firstRow = dataRows[0];
+          const firstRowHeaders = (firstRow.c || []).map(function (cell) {
+            return cell ? String(cell.f ?? cell.v ?? "").trim().toLowerCase() : "";
+          });
+
+          if (requiredColumns.every(function (column) { return firstRowHeaders.includes(column); })) {
+            columns = firstRowHeaders;
+            dataRows = dataRows.slice(1);
+          }
+        }
+
         const missingColumns = requiredColumns.filter(function (column) { return !columns.includes(column); });
         if (missingColumns.length > 0) throw new Error("시트에 필요한 열이 없습니다: " + missingColumns.join(", "));
 
         const invalidPlaceNames = [];
-        places = (data.table.rows || []).map(function (row, index) {
+        places = dataRows.map(function (row, index) {
           const values = {};
           columns.forEach(function (columnName, columnIndex) {
             const cell = row.c[columnIndex];
