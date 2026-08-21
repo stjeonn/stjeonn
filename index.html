@@ -201,6 +201,41 @@
         const place = places.find(function (item) { return item.id === placeId; });
         if (place) marker.setVisible(activeCategory === "전체" || place.category === activeCategory);
       });
+      // 선택한 카테고리의 핀들을 기준으로 지도 포커싱
+      const bounds = new google.maps.LatLngBounds();
+      
+      places.forEach(function (place) {
+        if (
+          activeCategory === "전체" ||
+          place.category === activeCategory
+        ) {
+          bounds.extend({
+            lat: place.lat,
+            lng: place.lng
+          });
+        }
+      });
+      
+      // 해당 카테고리에 장소가 있으면 지도 범위 조정
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds);
+      }
+            // 핀이 1개인 경우 적당한 확대 수준 유지
+      const visiblePlaces = places.filter(function (place) {
+        return (
+          activeCategory === "전체" ||
+          place.category === activeCategory
+        );
+      });
+      
+      if (visiblePlaces.length === 1) {
+        map.setCenter({
+          lat: visiblePlaces[0].lat,
+          lng: visiblePlaces[0].lng
+        });
+      
+        map.setZoom(15);
+      }
     }
 
     function applyFilter(category) {
