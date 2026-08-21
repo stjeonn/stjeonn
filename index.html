@@ -1026,12 +1026,6 @@
     ============================================================
     */
 
-    const script =
-      document.createElement(
-        "script"
-      );
-
-
 const script = document.createElement("script");
 
 script.src =
@@ -1054,26 +1048,6 @@ script.onerror = function () {
 };
 
 document.head.appendChild(script);
-
-
-    script.async = true;
-
-    script.defer = true;
-
-
-    script.onerror =
-      function() {
-
-        showError(
-          "Google Maps API를 불러오지 못했습니다. API Key를 확인해주세요."
-        );
-
-      };
-
-
-    document.head.appendChild(
-      script
-    );
 
   </script>
 
