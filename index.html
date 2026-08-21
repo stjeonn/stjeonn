@@ -480,27 +480,152 @@
       });
     }
 
-    function renderPlaceList() {
-      const visiblePlaces = places.filter(function (place) { return activeCategory === "전체" || place.category === activeCategory; });
-      const categories = activeCategory === "전체" ? getCategories() : [activeCategory];
-      if (visiblePlaces.length === 0) {
-        placeList.innerHTML = '<div class="empty-message">표시할 장소가 없습니다.</div>';
-        return;
-      }
-      placeList.innerHTML = categories.map(function (category) {
-        const categoryPlaces = visiblePlaces.filter(function (place) { return place.category === category; });
-        if (categoryPlaces.length === 0) return "";
-        return `<section class="place-group"><div class="group-title">${escapeHtml(category)}</div>${categoryPlaces.map(function (place) {
-          return `<button type="button" class="place-card" data-place-id="${place.id}"><span class="place-name">${escapeHtml(place.name)}</span><span class="place-description">${escapeHtml(place.description)}</span></button>`;
-        }).join("")}</section>`;
-      }).join("");
-      document.querySelectorAll(".place-card").forEach(function (card) {
-        card.addEventListener("click", function () {
-          const place = places.find(function (item) { return item.id === Number(card.dataset.placeId); });
-          if (place) openPlace(place);
-        });
+function renderPlaceList() {
+  const visiblePlaces = places.filter(function (place) {
+    return (
+      activeCategory === "전체" ||
+      place.category === activeCategory
+    );
+  });
+
+  const categories = [
+    ...new Set(
+      visiblePlaces.map(function (place) {
+        return place.category;
+      })
+    )
+  ];
+
+  placeList.innerHTML = categories
+    .map(function (category) {
+      const categoryPlaces = visiblePlaces.filter(function (place) {
+        return place.category === category;
       });
-    }
+
+      if (categoryPlaces.length === 0) {
+        return "";
+      }
+
+      return `
+        <section class="place-group">
+
+          <div class="group-title">
+            ${escapeHtml(category)}
+          </div>
+
+          ${categoryPlaces
+            .map(function (place) {
+              return `
+                <button
+                  type="button"
+                  class="place-card"
+                  data-place-id="${place.id}"
+                >
+                  <span class="place-name">
+                    ${escapeHtml(place.name)}
+                  </span>
+
+                  <span class="place-description">
+                    ${escapeHtml(place.description || "")}
+                  </span>
+                </button>
+              `;
+            })
+            .join("")}
+
+        </section>
+      `;
+    })
+    .join("");
+
+  /*
+   * 장소 클릭 이벤트
+   */
+  document
+    .querySelectorAll(".place-card")
+    .forEach(function (card) {
+
+      card.addEventListener(
+        "click",
+        function () {
+
+          const placeId =
+            Number(card.dataset.placeId);
+
+          const place =
+            places.find(function (item) {
+              return item.id === placeId;
+            });
+
+          if (!place) {
+            return;
+          }
+
+          /*
+           * 지도에서 해당 장소 열기
+           */
+          openPlace(place);
+
+
+          /*
+           * 모바일에서만
+           * 장소 선택 후 사이드바 접기
+           */
+          if (window.innerWidth <= 700) {
+
+            app.classList.add(
+              "sidebar-collapsed"
+            );
+
+            sidebarToggle.textContent = "▶";
+
+            sidebarToggle.setAttribute(
+              "aria-label",
+              "장소 목록 펼치기"
+            );
+
+            sidebarToggle.setAttribute(
+              "title",
+              "장소 목록 펼치기"
+            );
+
+            sidebarToggle.setAttribute(
+              "aria-expanded",
+              "false"
+            );
+
+
+            /*
+             * 사이드바가 접힌 후
+             * 지도 크기 다시 계산
+             */
+            window.setTimeout(
+              function () {
+
+                if (
+                  map &&
+                  window.google &&
+                  google.maps
+                ) {
+
+                  google.maps.event.trigger(
+                    map,
+                    "resize"
+                  );
+
+                }
+
+              },
+              280
+            );
+
+          }
+
+        }
+      );
+
+    });
+}
 
     function applyMarkerVisibility() {
       markers.forEach(function (marker, placeId) {
