@@ -1032,13 +1032,28 @@
       );
 
 
-    script.src =
-      "https://maps.googleapis.com/maps/api/js" +
-      "?key=" +
-      encodeURIComponent(
-        API_KEY
-      ) +
-      "&callback=initMap";
+const script = document.createElement("script");
+
+script.src =
+  "https://maps.googleapis.com/maps/api/js" +
+  "?key=" +
+  encodeURIComponent(API_KEY) +
+  "&loading=async";
+
+script.async = true;
+script.defer = true;
+
+script.onload = function () {
+  initMap();
+};
+
+script.onerror = function () {
+  showError(
+    "Google Maps API를 불러오지 못했습니다. API Key를 확인해주세요."
+  );
+};
+
+document.head.appendChild(script);
 
 
     script.async = true;
