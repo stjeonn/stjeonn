@@ -497,7 +497,38 @@
       document.querySelectorAll(".place-card").forEach(function (card) {
         card.addEventListener("click", function () {
           const place = places.find(function (item) { return item.id === Number(card.dataset.placeId); });
-          if (place) openPlace(place);
+          if (place) {
+  openPlace(place);
+
+  // 모바일에서만 장소 선택 후 사이드바 접기
+  if (window.innerWidth <= 700) {
+    app.classList.add("sidebar-collapsed");
+
+    sidebarToggle.textContent = "▶";
+
+    sidebarToggle.setAttribute(
+      "aria-label",
+      "장소 목록 펼치기"
+    );
+
+    sidebarToggle.setAttribute(
+      "title",
+      "장소 목록 펼치기"
+    );
+
+    sidebarToggle.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    // 사이드바가 접힌 후 지도 크기 갱신
+    window.setTimeout(function () {
+      if (map && window.google && google.maps) {
+        google.maps.event.trigger(map, "resize");
+      }
+    }, 280);
+  }
+}
         });
       });
     }
